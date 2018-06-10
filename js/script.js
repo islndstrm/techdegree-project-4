@@ -4,14 +4,18 @@
   const board = document.getElementById('board');
   const finishPage = document.getElementById('finish');
   const startButton = document.querySelector("div.screen-start .button");
+  const finishButton = document.querySelector("div.screen-win .button");
   const player1 = document.getElementById('player1');
   const player2 = document.getElementById('player2');
   const boxes = document.querySelectorAll('.box');
   const liBoxes = document.querySelectorAll('.boxes li');
+  let message = document.querySelector('.message');
   let turn = 'player1';
+  let drawCounter = 0;
   let player1Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   let player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+  // sets up all the winning patterns to check the player arrays against
   const patterns = [
     [0, 1, 2],
     [3, 4, 5],
@@ -22,6 +26,7 @@
     [0, 4, 8],
     [2, 4, 6]
   ]
+
   // hide board and finish page at load
   board.style.display = "none";
   finishPage.style.display = "none";
@@ -48,6 +53,9 @@
 
   // function to handle box clicks
   function clickBox (event) {
+    if (drawCounter >= 8) {
+      loadDrawPage();
+    }
     if (turn === 'player1') {
       if (!event.target.classList.contains('box-filled-1') && !event.target.classList.contains('box-filled-2')) {
         event.target.classList.add('box-filled-1');
@@ -55,6 +63,7 @@
         index = index[2];
         player1Boxes[index] = 1;
         checkForWin(player1Boxes, 1);
+        drawCounter += 1;
         turn = 'player2';
         player1.classList.remove('active');
         player2.classList.add('active');
@@ -66,6 +75,7 @@
         index = index[2];
         player2Boxes[index] = 1;
         checkForWin(player2Boxes, 2);
+        drawCounter += 1;
         turn = 'player1';
         player2.classList.remove('active');
         player1.classList.add('active');
@@ -73,8 +83,8 @@
     }
   }
 
+  // checks winning patterns against player's array
   function checkForWin (playerArray, playerNum) {
-      // pattern 1
     for (let i = 0;  i < patterns.length; i++) {
       let testArray = patterns[i];
       let index1 = testArray[0];
@@ -89,14 +99,24 @@
   function loadWinPage (playerNum) {
     board.style.display = "none";
     finishPage.style.display = "block";
+    message.textContent = "Winner";
     if (playerNum === 1) {
-      finishPage.classList.add('screen-win-one')
+      finishPage.classList.add('screen-win-one');
     }
     if (playerNum === 2) {
-      finishPage.classList.add('screen-win-two')
+      finishPage.classList.add('screen-win-two');
     }
   }
 
+  // loads "it's a draw page"
+  function loadDrawPage () {
+    board.style.display = "none";
+    finishPage.style.display = "block";
+    message.textContent = "It's a draw";
+    finishPage.classList.add('screen-win-tie');
+  }
+
+  // adds an id to each box
   for (let i = 0; i < liBoxes.length; i++) {
     liBoxes[i].id = `li${i}`;
   }
@@ -106,4 +126,24 @@
     box.addEventListener('mouseover', hoverBox);
     box.addEventListener('mouseout', hoverBox);
     box.addEventListener('click', clickBox);
+  });
+
+  // move to start after finish button is clicked
+  finishButton.addEventListener('click', () => {
+    startPage.style.display = "block";
+    board.style.display = "none";
+    finishPage.style.display = "none";
+    player1Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    drawCounter = 0;
+    turn = "player1";
+    player1.classList.add('active');
+    player2.classList.remove('active');
+    finishPage.classList.remove('screen-win-one');
+    finishPage.classList.remove('screen-win-two');
+    finishPage.classList.remove('screen-win-tie');
+    boxes.forEach((box) => {
+      box.classList.remove('box-filled-1');
+      box.classList.remove('box-filled-2');
+    });
   });
