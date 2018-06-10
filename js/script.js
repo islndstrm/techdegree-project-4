@@ -1,6 +1,9 @@
 // programming for tic-tac-toe
 
+document.addEventListener("DOMContentLoaded", function(){
   const startPage = document.getElementById('start');
+  const startHeader = document.querySelector('.screen-start header');
+  const winHeader = document.querySelector('.screen-win header');
   const board = document.getElementById('board');
   const finishPage = document.getElementById('finish');
   const startButton = document.querySelector("div.screen-start .button");
@@ -27,6 +30,15 @@
     [2, 4, 6]
   ]
 
+  // sets up player name
+  let playerInput = document.createElement('input');
+  let playerName = document.createElement('h1');
+  playerInput.type = "input";
+  playerInput.value = "Type your name...";
+  playerInput.style.margin = "50px 25px 50px 25px";
+  startHeader.insertBefore(playerInput, startButton);
+
+
   // hide board and finish page at load
   board.style.display = "none";
   finishPage.style.display = "none";
@@ -35,6 +47,13 @@
   startButton.addEventListener('click', () => {
     startPage.style.display = "none";
     board.style.display = "block";
+    // display player 1 name (if entered)
+    if (playerInput.value !== "Type your name...") {
+      playerName.innerHTML = `${playerInput.value}`;
+      player1.appendChild(playerName);
+      playerName.style.display = "inline";
+      playerName.style.padding = "10px 10px 30px 20px";
+    }
   });
 
   // player 1's turn is first when the bord loads
@@ -42,12 +61,14 @@
 
   // function to handle mouseovers and mouseouts
   function hoverBox(event) {
-    if (event.type === "mouseover" && turn === "player1") {
-      event.target.style.backgroundImage = "url('img/o.svg')";
-    } else if (event.type === "mouseover" && turn === "player2"){
-      event.target.style.backgroundImage = "url('img/x.svg')";
-    } else {
-      event.target.style.backgroundImage = "";
+    if (!event.target.classList.contains('box-filled-1') && !event.target.classList.contains('box-filled-2')) {
+      if (event.type === "mouseover" && turn === "player1") {
+        event.target.style.backgroundImage = "url('img/o.svg')";
+      } else if (event.type === "mouseover" && turn === "player2"){
+        event.target.style.backgroundImage = "url('img/x.svg')";
+      } else {
+        event.target.style.backgroundImage = "";
+      }
     }
   }
 
@@ -99,7 +120,11 @@
   function loadWinPage (playerNum) {
     board.style.display = "none";
     finishPage.style.display = "block";
-    message.textContent = "Winner";
+    if (playerInput.value !== "Type your name...") {
+      message.textContent = `${playerInput.value} is the Winner`;
+    } else {
+      message.textContent = "Winner";
+    }
     if (playerNum === 1) {
       finishPage.classList.add('screen-win-one');
     }
@@ -147,3 +172,4 @@
       box.classList.remove('box-filled-2');
     });
   });
+});
