@@ -1,6 +1,8 @@
-// programming for tic-tac-toe
+// programming for a tic-tac-toe game that plays against a computer
 
 document.addEventListener("DOMContentLoaded", function(){
+
+  // declare variables
   const startPage = document.getElementById('start');
   const startHeader = document.querySelector('.screen-start header');
   const winHeader = document.querySelector('.screen-win header');
@@ -12,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function(){
   const player2 = document.getElementById('player2');
   const boxes = document.querySelectorAll('.box');
   const liBoxes = document.querySelectorAll('.boxes li');
+  const boxesUL = document.getElementById('.boxes');
   let message = document.querySelector('.message');
   let turn = 'player1';
   let drawCounter = 0;
@@ -29,6 +32,12 @@ document.addEventListener("DOMContentLoaded", function(){
     [0, 4, 8],
     [2, 4, 6]
   ]
+  // the computer's choices of sqaure in order preference
+  const player2Choices = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+
+  // hide board and finish page at load
+  board.style.display = "none";
+  finishPage.style.display = "none";
 
   // sets up player name
   let playerInput = document.createElement('input');
@@ -37,11 +46,6 @@ document.addEventListener("DOMContentLoaded", function(){
   playerInput.value = "Type your name...";
   playerInput.style.margin = "50px 25px 50px 25px";
   startHeader.insertBefore(playerInput, startButton);
-
-
-  // hide board and finish page at load
-  board.style.display = "none";
-  finishPage.style.display = "none";
 
   // move to board after start button is clicked
   startButton.addEventListener('click', () => {
@@ -56,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   });
 
-  // player 1's turn is first when the bord loads
+  // player 1's turn is first when the board loads
   player1.classList.add('active');
 
   // function to handle mouseovers and mouseouts
@@ -85,21 +89,34 @@ document.addEventListener("DOMContentLoaded", function(){
         player1Boxes[index] = 1;
         checkForWin(player1Boxes, 1);
         drawCounter += 1;
-        turn = 'player2';
+        turn = 'computer';
         player1.classList.remove('active');
         player2.classList.add('active');
+
       }
-    } else if (turn === 'player2') {
-      if (!event.target.classList.contains('box-filled-1') && !event.target.classList.contains('box-filled-2')) {
-        event.target.classList.add('box-filled-2');
-        let index = event.target.id;
-        index = index[2];
-        player2Boxes[index] = 1;
-        checkForWin(player2Boxes, 2);
-        drawCounter += 1;
-        turn = 'player1';
-        player2.classList.remove('active');
-        player1.classList.add('active');
+      // code that controls computer playing as player 2
+      if (drawCounter >= 8) {
+        loadDrawPage();
+      } else {
+        while (turn === 'computer') {
+          for (var i = 0;  i < player2Choices.length; i++) {
+            var boxChoice = `li${player2Choices[i]}`;
+            var liChoice = document.getElementById(boxChoice);
+            if (!liChoice.classList.contains('box-filled-1')
+              && !liChoice.classList.contains('box-filled-2')) {
+              liChoice.classList.add('box-filled-2');
+              player2Boxes[player2Choices[i]] = 1;
+              checkForWin(player2Boxes, 2);
+              drawCounter += 1;
+              turn = 'player1';
+              player2.classList.remove('active');
+              player1.classList.add('active');
+              turn = 'player1';
+              i = player2Choices.length;
+              console.log(i);
+            }
+          }
+        }
       }
     }
   }
@@ -120,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function loadWinPage (playerNum) {
     board.style.display = "none";
     finishPage.style.display = "block";
-    if (playerInput.value !== "Type your name...") {
+    if (playerInput.value !== "Type your name..." && playerNum === 1) {
       message.textContent = `${playerInput.value} is the Winner`;
     } else {
       message.textContent = "Winner";
@@ -162,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function(){
     player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     drawCounter = 0;
     turn = "player1";
+    message = "";
     player1.classList.add('active');
     player2.classList.remove('active');
     finishPage.classList.remove('screen-win-one');
@@ -170,6 +188,7 @@ document.addEventListener("DOMContentLoaded", function(){
     boxes.forEach((box) => {
       box.classList.remove('box-filled-1');
       box.classList.remove('box-filled-2');
+      box.style.backgroundImage = "";
     });
   });
 });
