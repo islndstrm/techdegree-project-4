@@ -22,16 +22,9 @@ document.addEventListener("DOMContentLoaded", function(){
   let player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   // sets up all the winning patterns to check the player arrays against
-  const patterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ]
+  const patterns = [ [0, 1, 2], [0, 3, 6], [3, 4, 5], [6, 7, 8],
+    [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6] ];
+
   // the computer's choices of sqaure in order preference
   const player2Choices = [4, 0, 2, 6, 8, 1, 3, 5, 7];
 
@@ -76,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
-  // function to handle box clicks
+  // function to handle box clicks to add squares to game
   function clickBox (event) {
     if (drawCounter >= 8) {
       loadDrawPage();
@@ -92,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function(){
         turn = 'computer';
         player1.classList.remove('active');
         player2.classList.add('active');
-
       }
       // code that controls computer playing as player 2
       if (drawCounter >= 8) {
@@ -113,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function(){
               player1.classList.add('active');
               turn = 'player1';
               i = player2Choices.length;
-              console.log(i);
             }
           }
         }
@@ -124,16 +115,17 @@ document.addEventListener("DOMContentLoaded", function(){
   // checks winning patterns against player's array
   function checkForWin (playerArray, playerNum) {
     for (let i = 0;  i < patterns.length; i++) {
-      let testArray = patterns[i];
-      let index1 = testArray[0];
-      let index2 = testArray[1];
-      let index3 = testArray[2];
+      var testArray = patterns[i];
+      var index1 = testArray[0];
+      var index2 = testArray[1];
+      var index3 = testArray[2];
       if (playerArray[index1] === 1 && playerArray[index2] === 1 && playerArray[index3] === 1) {
         loadWinPage(playerNum);
       }
     }
   }
 
+  // loads winner page for the right player once
   function loadWinPage (playerNum) {
     board.style.display = "none";
     finishPage.style.display = "block";
@@ -144,8 +136,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     if (playerNum === 1) {
       finishPage.classList.add('screen-win-one');
-    }
-    if (playerNum === 2) {
+    } else if (playerNum === 2) {
       finishPage.classList.add('screen-win-two');
     }
   }
@@ -179,7 +170,9 @@ document.addEventListener("DOMContentLoaded", function(){
     player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     drawCounter = 0;
     turn = "player1";
-    message = "";
+    message.textContent = "";
+    playerInput.value = "Type your name...";
+    playerName.innerHTML = "";
     player1.classList.add('active');
     player2.classList.remove('active');
     finishPage.classList.remove('screen-win-one');
