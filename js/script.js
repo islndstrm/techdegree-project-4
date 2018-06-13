@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function(){
   let drawCounter = 0;
   let player1Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   let player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let gameOver = false;
 
   // sets up all the winning patterns to check the player arrays against
   const patterns = [ [0, 1, 2], [0, 3, 6], [3, 4, 5], [6, 7, 8],
@@ -71,25 +72,26 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // function to handle box clicks to add squares to game
   function clickBox (event) {
-    if (drawCounter >= 8) {
-      loadDrawPage();
-    }
+    // applies player 1's choices
     if (turn === 'player1') {
       if (!event.target.classList.contains('box-filled-1') && !event.target.classList.contains('box-filled-2')) {
-        event.target.classList.add('box-filled-1');
-        let index = event.target.id;
-        index = index[2];
-        player1Boxes[index] = 1;
-        checkForWin(player1Boxes, 1);
-        drawCounter += 1;
-        turn = 'computer';
-        player1.classList.remove('active');
-        player2.classList.add('active');
+          event.target.classList.add('box-filled-1');
+          let index = event.target.id;
+          index = index[2];
+          player1Boxes[index] = 1;
+          checkForWin(player1Boxes, 1);
+          drawCounter += 1;
+          // checks if it's a draw
+          if (drawCounter > 9 && gameOver !== true) {
+            loadDrawPage();
+          }
+          turn = 'computer';
+          player1.classList.remove('active');
+          player2.classList.add('active');
+        }
       }
       // code that controls computer playing as player 2
-      if (drawCounter >= 8) {
-        loadDrawPage();
-      } else {
+      if (turn === 'computer' && gameOver !== true) {
         while (turn === 'computer') {
           for (var i = 0;  i < player2Choices.length; i++) {
             var boxChoice = `li${player2Choices[i]}`;
@@ -103,14 +105,13 @@ document.addEventListener("DOMContentLoaded", function(){
               turn = 'player1';
               player2.classList.remove('active');
               player1.classList.add('active');
-              turn = 'player1';
               i = player2Choices.length;
             }
           }
         }
       }
     }
-  }
+
 
   // checks winning patterns against player's array
   function checkForWin (playerArray, playerNum) {
@@ -120,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function(){
       var index2 = testArray[1];
       var index3 = testArray[2];
       if (playerArray[index1] === 1 && playerArray[index2] === 1 && playerArray[index3] === 1) {
+        gameOver = true;
         loadWinPage(playerNum);
       }
     }
@@ -170,6 +172,7 @@ document.addEventListener("DOMContentLoaded", function(){
     player2Boxes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     drawCounter = 0;
     turn = "player1";
+    gameOver = false;
     message.textContent = "";
     playerInput.value = "Type your name...";
     playerName.innerHTML = "";
