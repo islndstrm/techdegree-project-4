@@ -43,10 +43,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // move to board after start button is clicked
   startButton.addEventListener('click', () => {
-    startPage.style.display = "none";
-    board.style.display = "block";
     // display player 1 name (if entered)
-    if (playerInput.value !== "Type your name...") {
+    if (playerInput.value === "Type your name..." || playerInput.value.length < 2) {
+      playerInput.style.border = "red 2px solid";
+      event.preventDefault();
+    } else {
+      playerInput.style.border = "none";
+      startPage.style.display = "none";
+      board.style.display = "block";
       playerName.innerHTML = `${playerInput.value}`;
       player1.appendChild(playerName);
       playerName.style.display = "inline";
@@ -85,30 +89,32 @@ document.addEventListener("DOMContentLoaded", function(){
           player2.classList.add('active');
         }
       }
-      if (turn === 'computer' && drawCounter < 9) {    // code that controls computer playing as player 2
-        while (turn === 'computer') {
-          for (var i = 0;  i < player2Choices.length; i++) {
-            var boxChoice = `li${player2Choices[i]}`;
-            var liChoice = document.getElementById(boxChoice);
-            if (!liChoice.classList.contains('box-filled-1')
-              && !liChoice.classList.contains('box-filled-2')) {
-              liChoice.classList.add('box-filled-2');
-              player2Boxes[player2Choices[i]] = 1;
-              checkForWin(player2Boxes, 2);
-              drawCounter += 1;
-              turn = 'player1';
-              player2.classList.remove('active');
-              player1.classList.add('active');
-              i = player2Choices.length;
+      // delays the computer turn by 2.5 seconds to allow active class to show
+      window.setTimeout(() => {
+        if (turn === 'computer' && drawCounter < 9) {    // code that controls computer playing as player 2
+          while (turn === 'computer') {
+            for (var i = 0;  i < player2Choices.length; i++) {
+              var boxChoice = `li${player2Choices[i]}`;
+              var liChoice = document.getElementById(boxChoice);
+              if (!liChoice.classList.contains('box-filled-1')
+                && !liChoice.classList.contains('box-filled-2')) {
+                  liChoice.classList.add('box-filled-2');
+                  player2Boxes[player2Choices[i]] = 1;
+                  checkForWin(player2Boxes, 2);
+                  drawCounter += 1;
+                  turn = 'player1';
+                  player2.classList.remove('active');
+                  player1.classList.add('active');
+                  i = player2Choices.length;
+                }
+              }
             }
           }
-        }
-      }
+      }, 2500);
       if (drawCounter >= 9 && gameOver === false) {   // checks if it's a draw
           loadDrawPage();
       }
     }
-
 
   // checks winning patterns against player's array
   function checkForWin (playerArray, playerNum) {
