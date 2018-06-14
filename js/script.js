@@ -72,8 +72,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // function to handle box clicks to add squares to game
   function clickBox (event) {
-    // applies player 1's choices
-    if (turn === 'player1') {
+    if (turn === 'player1') {     // applies player 1's choices
       if (!event.target.classList.contains('box-filled-1') && !event.target.classList.contains('box-filled-2')) {
           event.target.classList.add('box-filled-1');
           let index = event.target.id;
@@ -81,17 +80,12 @@ document.addEventListener("DOMContentLoaded", function(){
           player1Boxes[index] = 1;
           checkForWin(player1Boxes, 1);
           drawCounter += 1;
-          // checks if it's a draw
-          if (drawCounter > 9 && gameOver !== true) {
-            loadDrawPage();
-          }
           turn = 'computer';
           player1.classList.remove('active');
           player2.classList.add('active');
         }
       }
-      // code that controls computer playing as player 2
-      if (turn === 'computer' && gameOver !== true) {
+      if (turn === 'computer' && drawCounter < 9) {    // code that controls computer playing as player 2
         while (turn === 'computer') {
           for (var i = 0;  i < player2Choices.length; i++) {
             var boxChoice = `li${player2Choices[i]}`;
@@ -109,6 +103,9 @@ document.addEventListener("DOMContentLoaded", function(){
             }
           }
         }
+      }
+      if (drawCounter >= 9 && gameOver === false) {   // checks if it's a draw
+          loadDrawPage();
       }
     }
 
