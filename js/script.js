@@ -37,9 +37,10 @@ document.addEventListener("DOMContentLoaded", function(){
   let playerInput = document.createElement('input');
   let playerName = document.createElement('h1');
   playerInput.type = "input";
-  playerInput.value = "Type your name...";
+  playerInput.placeholder = "Type your name...";
   playerInput.style.margin = "50px 25px 50px 25px";
   startHeader.insertBefore(playerInput, startButton);
+  playerInput.focus();
 
   // move to board after start button is clicked
   startButton.addEventListener('click', () => {
